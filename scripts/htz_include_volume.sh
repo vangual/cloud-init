@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Put a lifesign into the log using the name of this script
+echo "Start of htz_include_volume.sh" | tee -a /var/log/cloud-init.log
+
 # Define base mount directory for the first volume. 
 # (Note: this script only considers the first volume)
 DEFAULT_BASE_MOUNT="/mnt/data"
@@ -19,6 +22,7 @@ VOLUMES=($(ls /dev/disk/by-id/scsi-0HC_Volume_* 2>/dev/null))
 
 if [ ${#VOLUMES[@]} -eq 0 ]; then
     echo "No Hetzner Cloud Volumes found." | tee -a /var/log/cloud-init.log
+    echo "End (error) of htz_include_volume.sh" | tee -a /var/log/cloud-init.log
     exit 0
 fi
 
@@ -119,3 +123,6 @@ for TARGET_PATH in "${SYMLINK_PATHS[@]}"; do
     ln -sfn "$SYMLINK_TARGET" "$TARGET_PATH"
     echo "Created symlink: $TARGET_PATH -> $SYMLINK_TARGET" | tee -a /var/log/cloud-init.log
 done
+
+# Put a lifesign into the log using the name of this script
+echo "End of htz_include_volume.sh" | tee -a /var/log/cloud-init.log
