@@ -1,12 +1,18 @@
 #!/bin/bash
 
-# Define base mount directory for volumes
-BASE_MOUNT="/mnt/data"
+# Define base mount directory for the first volume. 
+# (Note: this script only considers the first volume)
+DEFAULT_BASE_MOUNT="/mnt/data"
+
 
 # List of directories to symlink to the first detected volume
-SYMLINK_PATHS=(
+DEFAULT_SYMLINK_PATHS=(
     "/var/lib/docker"
 )
+
+# Read environment variables for customization
+BASE_MOUNT=${BASE_MOUNT:-$DEFAULT_BASE_MOUNT}
+SYMLINK_PATHS=(${SYMLINK_PATHS:-${DEFAULT_SYMLINK_PATHS[@]}})
 
 # Detect Hetzner Cloud volumes
 VOLUMES=($(ls /dev/disk/by-id/scsi-0HC_Volume_* 2>/dev/null))
@@ -20,7 +26,7 @@ echo "Found ${#VOLUMES[@]} Hetzner Cloud volumes: ${VOLUMES[*]}" | tee -a /var/l
 
 # Process first detected volume
 DEVICE="${VOLUMES[0]}"
-MOUNT_POINT="${BASE_MOUNT}0"
+MOUNT_POINT="${BASE_MOUNT}"
 LABEL="HCVolume-0"
 
 # Ensure mount directory exists
@@ -51,7 +57,7 @@ mount "$MOUNT_POINT"
 echo "$DEVICE mounted at $MOUNT_POINT" | tee -a /var/log/cloud-init.log
 
 # Ensure directory for symlinked paths exists
-SYMLINK_TARGET_DIR="$MOUNT_POINT/symlinked_dirs"
+SYMLINK_TARGET_DIR="$MOUNT_POINT/"
 mkdir -p "$SYMLINK_TARGET_DIR"
 
 # Process each path in the SYMLINK_PATHS list
