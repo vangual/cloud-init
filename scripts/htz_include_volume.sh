@@ -66,7 +66,14 @@ mkdir -p "$SYMLINK_TARGET_DIR"
 
 # Process each path in the SYMLINK_PATHS list
 for TARGET_PATH in "${SYMLINK_PATHS[@]}"; do
-    SYMLINK_TARGET="$SYMLINK_TARGET_DIR$(echo "$TARGET_PATH" | sed 's|/|_|g')"
+    TARGET_PATH_NOLS=$(echo "$TARGET_PATH" | sed 's|^/||')  # Remove leading slashes
+    
+    if [ -z "$TARGET_PATH_NOLS" ]; then
+        echo "Skipping empty target path." | tee -a /var/log/cloud-init.log
+        continue
+    fi
+    
+    SYMLINK_TARGET="$SYMLINK_TARGET_DIR$(echo "$TARGET_PATH_NOLS" | sed 's|/|_|g')"
 
     # Ensure parent directories exist
     PARENT_DIR=$(dirname "$TARGET_PATH")
