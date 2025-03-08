@@ -1,0 +1,13 @@
+#cloud-config
+write_files:
+  - path: /root/ci-scripts.conf.sh
+    permissions: '0600'
+    content: |
+      export SCRIPTS_URL=https://raw.githubusercontent.com/vangual/cloud-init/master/scripts
+      # List of directories to symlink to the first detected volume
+      export SYMLINK_PATHS=(
+          "/var/lib/docker"
+      )
+      # eof
+runcmd:
+  - bash -c 'source /root/ci-scripts.conf.sh && curl -fsSL "$SCRIPTS_URL/htz_include_volume.sh" | bash'

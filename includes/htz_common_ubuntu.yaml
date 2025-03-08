@@ -1,0 +1,29 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - apt-transport-https
+  - python3-systemd
+  - fail2ban
+  - ufw
+
+runcmd:
+  # Enable UFW and allow SSH connections
+  - ufw allow OpenSSH
+  - ufw --force enable
+
+  # Ensure fail2ban is running and enabled at boot
+  - systemctl enable fail2ban
+  - systemctl restart fail2ban
+
+write_files:
+  - path: /etc/fail2ban/jail.local
+    content: |
+      [sshd]
+      enabled = true
+      maxretry = 5
+      findtime = 10m
+      bantime = 1h
+    permissions: '0644'
+    owner: root:root
