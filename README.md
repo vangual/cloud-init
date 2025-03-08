@@ -6,9 +6,9 @@
 Specify the remote includes like so in the cloud-init
 ```
 #include
-- https://github.com/vangual/cloud-init/raw/refs/heads/master/includes/htz_common_ubuntu.yaml
+https://github.com/vangual/cloud-init/raw/refs/heads/master/includes/htz_common_ubuntu.yaml
 
 #include-once
-- https://github.com/vangual/cloud-init/raw/refs/heads/master/includes/htz_prepare_volumes.yaml
+https://github.com/vangual/cloud-init/raw/refs/heads/master/includes/htz_prepare_volumes.yaml
 
 ```
